@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuários</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input { margin: 5px 0; padding: 6px; width: 250px; }
+        table { width: 80%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+
+<h2>Cadastro de Usuário</h2>
+
+<input id="nome" placeholder="Nome Completo"><br>
+<input id="email" placeholder="Email"><br>
+<input id="cpf" placeholder="CPF"><br>
+<input id="rg" placeholder="RG"><br>
+<input id="cnh" placeholder="CNH"><br>
+<input id="rua" placeholder="Rua"><br>
+<input id="bairro" placeholder="Bairro"><br>
+<input id="senha" placeholder="Senha" type="password"><br>
+
+<button onclick="cadastrar()">Cadastrar</button>
+
+<hr>
+
+<h2>Login</h2>
+<input id="loginEmail" placeholder="Email"><br>
+<input id="loginSenha" placeholder="Senha" type="password"><br>
+
+<button onclick="login()">Entrar</button>
+
+<hr>
+
+<h2>Usuários Cadastrados</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Bairro</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="lista"></tbody>
+</table>
+
+<script>
+const API = "http://localhost:3000";
+
+async function listar() {
+    const res = await fetch(API + "/usuarios");
+    const data = await res.json();
+
+    const tbody = document.getElementById("lista");
+    tbody.innerHTML = "";
+
+    data.forEach(u => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${u.id}</td>
+                <td>${u.nomeCompleto}</td>
+                <td>${u.email}</td>
+                <td>${u.bairro || "-"}</td>
+                <td><button onclick="excluir(${u.id})">Excluir</button></td>
+            </tr>
+        `;
+    });
+}
+
+async function cadastrar() {
+    const dados = {
+        nomeCompleto: nome.value,
+        email: email.value,
+        senha: senha.value,
+        cpf: cpf.value,
+        rg: rg.value,
+        cnh: cnh.value,
+        rua: rua.value,
+        bairro: bairro.value,
+    };
+
+    const res = await fetch(API + "/usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+        alert("Usuário cadastrado!");
+        listar();
+    } else {
+        alert("Erro: " + JSON.stringify(data));
+    }
+}
+
+async function login() {
+    const dados = {
+        email: loginEmail.value,
+        senha: loginSenha.value
+    };
+
+    const res = await fetch(API + "/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+        alert("Login OK! Bem-vindo: " + data.usuario.nomeCompleto);
+    } else {
+        alert("Erro: " + data.error);
+    }
+}
+
+async function excluir(id) {
+    if (!confirm("Excluir usuário?")) return;
+
+    await fetch(API + "/usuarios/" + id, {
+        method: "DELETE"
+    });
+
+    listar();
+}
+
+listar();
+</script>
+
+</body>
+</html>

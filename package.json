@@ -1,0 +1,22 @@
+{
+  "name": "crud-usuario-express",
+  "version": "1.0.0",
+  "description": "CRUD de usuarios com Express, Prisma e login simples",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/app.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^5.1.0",
+    "prisma": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

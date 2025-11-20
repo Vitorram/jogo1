@@ -1,0 +1,19 @@
+datasource db {
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Usuario {
+  id           Int     @id @default(autoincrement())
+  nomeCompleto String
+  email        String  @unique
+  cpf          String?
+  rua          String?
+  bairro       String?
+  rg           String?
+  cnh          String?
+  senhaHash    String
+}
